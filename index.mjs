@@ -1,0 +1,6 @@
+export const policy={feed:'XLMUSD',decimals:8,max_age:60,future_skew:5,max_deviation_bps:500,require_reference:false};
+const r={feed:'XLMUSD',answer:'10000000',decimals:8,timestamp:'1800000000'};
+const scenario=(id,changes,expectedCode,extra={})=>({id,now:'1800000000',report:{...r,...changes},expectedCode,...extra});
+export const sample={schema:1,provenance:'Synthetic mock-oracle failure corpus. No Chainlink or other provider signatures are verified.',policy,scenarios:[
+ scenario('fresh',{},'OK'),scenario('age-boundary',{timestamp:'1799999940'},'OK'),scenario('stale',{timestamp:'1799999939'},'STALE'),scenario('future',{timestamp:'1800000006'},'FUTURE'),scenario('future-boundary',{timestamp:'1800000005'},'OK'),scenario('wrong-decimals',{decimals:7},'WRONG_DECIMALS'),scenario('wrong-feed',{feed:'BTCUSD'},'WRONG_FEED'),scenario('negative',{answer:'-1'},'NON_POSITIVE'),scenario('zero',{answer:'0'},'NON_POSITIVE'),scenario('missing-timestamp',{timestamp:'0'},'INVALID_TIMESTAMP'),scenario('divergence',{answer:'12000000'},'DIVERGENCE',{reference:r}),scenario('deviation-boundary',{answer:'10500000'},'OK',{reference:r}),scenario('bad-reference',{},'STALE',{reference:{...r,timestamp:'1799999939'}}),scenario('malformed-answer',{answer:'NaN'},'MALFORMED')
+]};
